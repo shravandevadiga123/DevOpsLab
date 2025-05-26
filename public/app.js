@@ -219,51 +219,7 @@ class MeetingRoomBooker {
             console.error("Error fetching room statuses:", error);
         }
     }
-    
-    
-    
-    
 
-    async fetchBookingsByDate() {
-        const bookingDate = document.getElementById("view-booking-date").value;
-        const bookingList = document.getElementById("booking-list");
-    
-        if (!bookingDate) {
-            alert("Please select a date!");
-            return;
-        }
-    
-        try {
-            const response = await fetch(`http://localhost:5000/bookings?date=${bookingDate}`, {
-                headers: { Authorization: `Bearer ${this.token}` },
-            });
-    
-            if (!response.ok) {
-                console.error("Failed to fetch bookings");
-                return;
-            }
-    
-            const bookings = await response.json();
-            bookingList.innerHTML = "";  // ✅ Clears previous list
-    
-            if (bookings.length === 0) {
-                bookingList.innerHTML = "<li>No bookings found for this date.</li>";
-                return;
-            }
-    
-            bookings.forEach((booking) => {
-                const listItem = document.createElement("li");
-                listItem.textContent = `Room ${booking.room_id} - ${booking.booking_time} - ${booking.user_email} - ${booking.purpose}`;
-                bookingList.appendChild(listItem);
-            });
-    
-            console.log("✅ Bookings fetched:", bookings);  // ✅ Debugging
-        } catch (error) {
-            console.error("Error fetching bookings:", error);
-        }
-    }
-    
-    
     
     
 
