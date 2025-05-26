@@ -367,9 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             meetingRoomBooker.updateRoomStatuses();
         }, 500);
-    } else {
-        //new MeetingRoomBooker();
-    }
+    } 
 });
 
 
