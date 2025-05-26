@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  app:
+    image: shravandevadiga123/devopslab  # Match your image name
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env  # Load environment variables from .env
