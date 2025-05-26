@@ -1,13 +1,14 @@
 const mysql = require('mysql2');
 
 const pool = mysql.createPool({
-    host: 'localhost',  // XAMPP MySQL runs on localhost
-    user: 'root',       // Default MySQL user in XAMPP
-    password: '',       // Leave empty if no password is set
-    database: 'meeting_room_booking', // Ensure this is the correct database
+    host: 'host.docker.internal', // Use this for Docker on Windows/macOS
+    user: 'root',
+    password: '', // Leave empty if no password is set
+    database: 'meeting_room_booking',
+    port: 3306,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
 });
 
-module.exports = pool.promise(); // Export with promises for async/await
+module.exports = pool.promise();
