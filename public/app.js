@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
             meetingRoomBooker.updateRoomStatuses();
         }, 500);
     } else {
-        new MeetingRoomBooker();
+        //new MeetingRoomBooker();
     }
 });
 
