@@ -1,7 +1,7 @@
 const mysql = require('mysql2');
 
 const pool = mysql.createPool({
-    host: 'host.docker.internal', // Use this for Docker on Windows/macOS
+    host: 'host.docker.internal', // Use this for Docker on Windows/macOShost.docker.internal
     user: 'root',
     password: '', // Leave empty if no password is set
     database: 'meeting_room_booking',
