@@ -1,17 +1,18 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+require("dotenv").config(); // Load .env first!
 const db = require("./db");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const moment = require("moment");
 const { body, validationResult } = require("express-validator");
-require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const SECRET_KEY = process.env.SECRET_KEY;
 
+// Safety check for SECRET_KEY
 if (!SECRET_KEY) {
     throw new Error("❌ SECRET_KEY is missing in .env file!");
 }
@@ -21,7 +22,7 @@ app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-// Test database connection
+// Test database connection on startup
 (async () => {
     try {
         await db.query("SELECT 1");
@@ -32,7 +33,7 @@ app.use(express.static(path.join(__dirname, "public")));
     }
 })();
 
-// Default route
+// Serve frontend
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
 });
@@ -93,7 +94,7 @@ const authenticateUser = (req, res, next) => {
     }
 };
 
-// Book a Room (With 1-Hour Rule) - FIXED
+// Book a Room (1-Hour Rule)
 app.post("/book-room", authenticateUser, async (req, res) => {
     const { room_id, user_email, booking_date, booking_time, purpose } = req.body;
 
@@ -102,26 +103,14 @@ app.post("/book-room", authenticateUser, async (req, res) => {
     const bookingEndTime = moment(bookingTime).add(1, "hour").format("HH:mm");
 
     try {
-        // Debug: Log the query parameters
-        console.log("Query Parameters:", {
-            room_id,
-            booking_date,
-            booking_time,
-            bookingEndTime
-        });
-
-        // Modified query to check for actual overlapping bookings
+        // Check for overlapping bookings
         const [existingBookings] = await db.query(
             "SELECT * FROM bookings WHERE room_id = ? AND booking_date = ? AND " +
-            "(booking_time = ? OR " +  // ✅ Prevents exact same time booking
-            "(booking_time < ? AND DATE_ADD(booking_time, INTERVAL 1 HOUR) > ?) OR " + 
+            "(booking_time = ? OR " +
+            "(booking_time < ? AND DATE_ADD(booking_time, INTERVAL 1 HOUR) > ?) OR " +
             "(? <= booking_time AND booking_time < DATE_ADD(?, INTERVAL 1 HOUR)))",
             [room_id, booking_date, booking_time, booking_time, booking_time, booking_time, booking_time]
         );
-        
-
-        // Debug: Log existing bookings
-        console.log("Existing Bookings:", existingBookings);
 
         if (existingBookings.length > 0) {
             return res.status(400).json({ error: "Room is already booked within this time slot." });
@@ -153,7 +142,6 @@ app.get("/bookings", authenticateUser, async (req, res) => {
         res.status(500).json({ error: "Database error" });
     }
 });
-
 
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
