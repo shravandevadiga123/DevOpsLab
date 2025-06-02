@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage"
+  "test": "DB_HOST=host.docker.internal jest --coverage"
   },
   "keywords": [],
   "author": "",
